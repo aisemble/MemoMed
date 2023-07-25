@@ -3,7 +3,7 @@ import speech_recognition as sr
 import streamlit as st
 from langchain.memory import ChatMessageHistory, ConversationBufferMemory
 
-openai.api_key = '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'
+openai.api_key = 'openai api'
 
 # Initialize the conversation history
 conversation_history = ChatMessageHistory()
