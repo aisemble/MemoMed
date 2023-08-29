@@ -12,8 +12,8 @@
 # what might cause these symptoms?
 # which specialist I should see? 
 
-!pip install openai
-!pip install SpeechRecognition
+pip install openai
+pip install SpeechRecognition
 
 import openai
 import speech_recognition as sr
