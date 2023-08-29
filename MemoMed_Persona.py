@@ -16,12 +16,13 @@ import openai
 import speech_recognition as sr
 import streamlit as st
 from langchain.memory import ChatMessageHistory, ConversationBufferMemory
+from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
 
-# Import the API_KEY from config.py
-from API_Key import OPENAI_API_KEY
+openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
 
 def main():
-    print(f"The API key is: {OPENAI_API_KEY}")
+    print(f" ")
 
 if __name__ == "__main__":
     main()
