@@ -1,4 +1,4 @@
 openai
-speech_recognition
+SpeechRecognition
 langchain
 streamlit

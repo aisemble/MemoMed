@@ -1,9 +1,32 @@
+# a mock conversation dialogue for a clinical visit:
+
+# Patient: Doctor, I've been feeling really tired lately, more than usual. I just don't have the energy to do anything.
+# Doctor: I see. Have you noticed any other symptoms?
+# Patient: Yes, I've also been experiencing shortness of breath, even when I'm not doing anything strenuous. And I've noticed that my heart has been beaing faster than normal.
+# Doctor: "How about your appetite? Any changes there?
+# Patient: Now that you mention it, I haven't been eating as much as I usually do. I've also been feeling a bit dizzy and lightheaded at times.
+
+# Example questions:
+
+# what are the major symptoms? 
+# what might cause these symptoms?
+# which specialist I should see? 
+
+
 import openai
 import speech_recognition as sr
 import streamlit as st
 from langchain.memory import ChatMessageHistory, ConversationBufferMemory
+from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
 
-openai.api_key = 'openai api'
+openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
+
+def main():
+    print(f" ")
+
+if __name__ == "__main__":
+    main()
 
 # Initialize the conversation history
 conversation_history = ChatMessageHistory()
@@ -37,82 +60,92 @@ def transcribe_audio(audio_file):
         st.write("Sorry, I could not transcribe the file.")
         return None
 
-def generate_notes(transcribed_text):
-    template = f"""
-    <b>Patient:</b> {transcribed_text}
+# def generate_notes(transcribed_text):
+#     template = f"""
+#     <b>Patient:</b> {transcribed_text}
 
-    <b>Source of Information:</b>
-    <b>Date and Time:</b>
-    <b>Interpreter/Substitute Decision-Maker:</b>
+#     <b>Source of Information:</b>
+#     <b>Date and Time:</b>
+#     <b>Interpreter/Substitute Decision-Maker:</b>
 
-    <b>Allergies:</b>
+#     <b>Allergies:</b>
 
-    <b>Relevant History and Physical Findings:</b>
+#     <b>Relevant History and Physical Findings:</b>
 
-    <b>Vital Signs:</b>
+#     <b>Vital Signs:</b>
 
-    <b>Pertinent Positive/Negative Findings:</b>
+#     <b>Pertinent Positive/Negative Findings:</b>
 
-    <b>Assessment of Patient Capacity:</b>
+#     <b>Assessment of Patient Capacity:</b>
 
-    <b>Clinical Assessment:</b>
+#     <b>Clinical Assessment:</b>
 
-    <b>Working Diagnosis:</b>
-    <b>Differential Diagnosis:</b>
-    <b>Final Diagnosis:</b>
+#     <b>Working Diagnosis:</b>
+#     <b>Differential Diagnosis:</b>
+#     <b>Final Diagnosis:</b>
 
-    <b>Plan of Action:</b>
+#     <b>Plan of Action:</b>
 
-    <b>Investigations:</b>
-    <b>Consultations:</b>
-    <b>Treatment:</b>
-    <b>Follow-Up:</b>
+#     <b>Investigations:</b>
+#     <b>Consultations:</b>
+#     <b>Treatment:</b>
+#     <b>Follow-Up:</b>
 
-    <b>Rationale for the Plan:</b>
+#     <b>Rationale for the Plan:</b>
 
-    <b>Expectations of Outcomes:</b>
+#     <b>Expectations of Outcomes:</b>
 
-    <b>Medications (Doses and Duration):</b>
+#     <b>Medications (Doses and Duration):</b>
 
-    <b>Medication Reconciliation:</b>
+#     <b>Medication Reconciliation:</b>
 
-    <b>Calls to Consultants:</b>
-    <b>Consultant's Name:</b>
-    <b>Advice Received:</b>
+#     <b>Calls to Consultants:</b>
+#     <b>Consultant's Name:</b>
+#     <b>Advice Received:</b>
 
-    <b>Information Given by/to the Patient (or SDM):</b>
+#     <b>Information Given by/to the Patient (or SDM):</b>
 
-    <b>Concerns Raised, Questions Asked, and Responses Given:</b>
+#     <b>Concerns Raised, Questions Asked, and Responses Given:</b>
 
-    <b>Verification of Patient Understanding:</b>
+#     <b>Verification of Patient Understanding:</b>
 
-    <b>Consent Discussion Summary:</b>
+#     <b>Consent Discussion Summary:</b>
 
-    <b>Discharge Instructions:</b>
+#     <b>Discharge Instructions:</b>
 
-    <b>Symptoms and Signs that Should Prompt a Reassessment:</b>
+#     <b>Symptoms and Signs that Should Prompt a Reassessment:</b>
 
-    <b>Urgency of Follow Up:</b>
+#     <b>Urgency of Follow Up:</b>
 
-    <b>Where and When to Return:</b>
+#     <b>Where and When to Return:</b>
 
-    <b>Missed Appointments:</b>
+#     <b>Missed Appointments:</b>
 
-    <b>Efforts to Follow Up on Investigation Results:</b>
+#     <b>Efforts to Follow Up on Investigation Results:</b>
 
-    <b>Communication with Other Care Providers at Discharge:</b>
+#     <b>Communication with Other Care Providers at Discharge:</b>
 
-    <b>Signature of Writer and Role:</b>
+#     <b>Signature of Writer and Role:</b>
 
-    -End of Note-
+#     -End of Note-
 
-    {{
-    - The generated note should not include any personally identifiable information (PII) or protected health information (PHI) that could violate privacy laws like HIPAA.
-    - The note should be factual and based on the information provided in the transcribed text.
-    - The note should not include any speculative or hypothetical information.
-    }}
-    """
-    # Use the OpenAI API to generate the note
+#     {{
+#     - The generated note should not include any personally identifiable information (PII) or protected health information (PHI) that could violate privacy laws like HIPAA.
+#     - The note should be factual and based on the information provided in the transcribed text.
+#     - The note should not include any speculative or hypothetical information.
+#     }}
+#     """
+#     # Use the OpenAI API to generate the note
+#     response = openai.ChatCompletion.create(
+#         model="gpt-4",
+#         messages=[
+#             {"role": "system", "content": template},
+#             {"role": "user", "content": transcribed_text}
+#         ]
+#     )
+#     return response['choices'][0]['message']['content'].strip()
+
+def generate_notes(transcribed_text, template):
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
@@ -120,7 +153,9 @@ def generate_notes(transcribed_text):
             {"role": "user", "content": transcribed_text}
         ]
     )
-    return response['choices'][0]['message']['content'].strip()
+    suggestions = response['choices'][0]['message']['content'].strip()
+    return suggestions
+
 
 def generate_suggestions(note):
     messages = [
@@ -142,63 +177,6 @@ def generate_suggestions(note):
     suggestion = response['choices'][0]['message']['content']
     return suggestion
 
-# def chat_with_gpt(prompt, conversation_history):
-#     # Add the user's message to the conversation history
-#     conversation_history.add_user_message(prompt)
-#     # conversation_history.add_ai_message(generated_notes)
-
-#     # Initialize the memory
-#     memory = ConversationBufferMemory()
-
-#     # Add the conversation history to the memory
-#     memory.chat_memory = conversation_history
-
-#     # Load the memory variables
-#     memory_variables = memory.load_memory_variables({})
-
-#     # Use the OpenAI API to generate the response
-#     response = openai.ChatCompletion.create(
-#         model="gpt-4",
-#         messages=[
-#             {"role": "system", "content": "You are a helpful healthcare assistant."},
-#             {"role": "user", "content": memory_variables['history']}
-#         ]
-#     )
-
-#     # Add the AI's message to the conversation history
-#     conversation_history.add_ai_message(response['choices'][0]['message']['content'])
-
-#     return response['choices'][0]['message']['content']
-
-# def chat_with_gpt(prompt, generated_notes, conversation_history):
-#     # Add the generated notes to the conversation history
-#     conversation_history.add_system_message(generated_notes)
-
-#     # Add the user's message to the conversation history
-#     conversation_history.add_user_message(prompt)
-
-#     # Initialize the memory
-#     memory = ConversationBufferMemory()
-
-#     # Add the conversation history to the memory
-#     memory.chat_memory = conversation_history
-
-#     # Load the memory variables
-#     memory_variables = memory.load_memory_variables({})
-
-#     # Use the OpenAI API to generate the response
-#     response = openai.ChatCompletion.create(
-#         model="gpt-4",
-#         messages=[
-#             {"role": "system", "content": "You are a helpful assistant."},
-#             {"role": "user", "content": memory_variables['history']}
-#         ]
-#     )
-
-#     # Add the AI's message to the conversation history
-#     conversation_history.add_ai_message(response['choices'][0]['message']['content'])
-
-#     return response['choices'][0]['message']['content']
 def chat_with_gpt(prompt, generated_notes, conversation_history):
     # Add the generated notes to the conversation history
     conversation_history.add_ai_message(generated_notes)
@@ -230,97 +208,131 @@ def chat_with_gpt(prompt, generated_notes, conversation_history):
     return response['choices'][0]['message']['content']
 
 
+# Define the templates
+templates = {
+    "General": """
+Patient: {transcribed_text}
 
-# def main():
-#     st.title("Medical Assistant App")
-#     st.write("This is a prototype of a medical assistant application.")
+Date and Time:
+Reason for Visit:
 
-#     transcript = None
-#     note = None
-#     suggestion = None
-#     chat_history = []
+Presenting Symptoms:
 
-#     # option = st.selectbox(
-#     #     'Choose an option',
-#     #     ('Transcribe speech', 'Generate notes', 'Generate suggestions', 'Chat with GPT')
-#     # )
+Past Medical History:
 
-#     # if option == 'Transcribe speech':
-#     #     if st.button("Start Transcription"):
-#     #         transcript = transcribe_speech()
-#     #         if transcript:
-#     #             st.write("Transcript: ", transcript)
+Physical Examination Findings:
 
-#     option = st.selectbox(
-#         'Choose an option',
-#         ('Transcribe audio', 'Generate notes', 'Generate suggestions', 'Chat with GPT')
-#     )
+Assessment:
+Plan:
 
-#     transcript = None
-#     note = None
-#     chat_history = []
+Signature:
+""",
+    "Pediatrician": """
+Patient: {transcribed_text}
 
-#     if option == 'Transcribe audio':
-#         audio_file = st.file_uploader("Upload an audio file", type=['wav', 'mp3', 'flac'])
-#         if audio_file is not None:
-#             if st.button("Start Transcription"):
-#                 st.write("Transcribing...")
-#                 transcript = transcribe_audio(audio_file)
-#                 st.button("Transcription Complete", disabled=True)
+Date and Time of Visit:
+Reason for Visit:
 
-#     elif option == 'Generate notes':
-#         input_option = st.radio("Choose an input option", ("Enter transcript manually", "Use transcribed text"))
-#         if input_option == "Enter transcript manually":
-#             transcript = st.text_input("Enter transcript")
-#         if st.button("Generate Note"):
-#             if transcript:
-#                 note = generate_notes(transcript)
-#                 st.write("Note: ", note)
-#     elif option == 'Generate suggestions':
-#         input_option = st.radio("Choose an input option", ("Enter note manually", "Use generated note"))
-#         if input_option == "Enter note manually":
-#             note = st.text_input("Enter note")
-#         if st.button("Generate Suggestion"):
-#             if note:
-#                 suggestion = generate_suggestions(note)
-#                 st.write("Suggestion: ", suggestion)
-#     elif option == 'Chat with GPT':
-#         message = st.text_input("Enter message")
-#         if st.button("Chat"):
-#             if message:
-#                 reply = chat_with_gpt(message)
-#                 chat_history.append({"user": message, "assistant": reply})
-#                 for chat in chat_history:
-#                     st.write("User: ", chat["user"])
-#                     st.write("Assistant: ", chat["assistant"])
+Presenting Symptoms:
+Duration of Symptoms:
+
+Past Medical History:
+Immunization Status:
+Growth and Development History:
+
+Physical Examination Findings:
+Vital Signs:
+Growth Parameters:
+Systemic Examination Findings:
+
+Assessment:
+Working Diagnosis:
+Differential Diagnosis:
+
+Plan:
+Investigations:
+Treatment Plan:
+Follow-Up Plan:
+Health Promotion and Disease Prevention Advice:
+
+Parent's Concerns and Questions:
+Responses Given:
+
+Signature of Pediatrician:
+""",
+    "ED nurse": """
+Patient: {transcribed_text}
+
+Date and Time of Arrival:
+Chief Complaint:
+
+Presenting Symptoms:
+Duration of Symptoms:
+
+Past Medical History:
+Allergies:
+
+Vital Signs on Arrival:
+Physical Examination Findings:
+
+Nursing Assessment:
+Level of Consciousness:
+Pain Assessment:
+Other Relevant Findings:
+
+Interventions and Treatments Provided:
+Medications Administered:
+Procedures Performed:
+
+Response to Interventions:
+Change in Condition:
+
+Handover Notes:
+
+Signature of Nurse:
+""",
+    "Surgeon": """
+Patient: {transcribed_text}
+
+Date and Time of Consultation:
+Reason for Consultation:
+
+Presenting Symptoms:
+Duration of Symptoms:
+
+Past Medical History:
+Previous Surgeries:
+Allergies:
+
+Physical Examination Findings:
+Systemic Examination:
+Local Examination:
+
+Preoperative Diagnosis:
+Differential Diagnosis:
+
+Plan:
+Investigations:
+Proposed Surgical Procedure:
+Risks and Benefits Discussed:
+
+Consent Discussion Summary:
+
+Postoperative Care Plan:
+
+Patient's Concerns and Questions:
+Responses Given:
+
+Signature of Surgeon:
+"""
+}
+
 def main():
     st.title("MemoMed: An Auto Note-Taking Tool for Doctors and Nurses")
 
-    # st.header("Transcribe Speech")
-    # audio_file = st.file_uploader("Upload Audio", type=['mp3', 'wav'])
-    # if 'transcript' not in st.session_state:
-    #     st.session_state.transcript = ''
-    # if st.button("Start Transcription"):
-    #     st.session_state.transcript = transcribe_audio(audio_file)
-    # st.write(st.session_state.transcript)
+    persona = st.selectbox("Select your persona:", ["General", "Pediatrician", "ED nurse", "Surgeon"])
 
-    # st.header("Generate Notes")
-    # notes_input = st.text_area("Input for Notes", st.session_state.transcript)
-    # if st.button("Generate Notes"):
-    #     st.session_state.notes = generate_notes(notes_input)
-    #     st.write(st.session_state.notes)
-
-    # st.header("Generate Suggestions")
-    # suggestion_input = st.text_area("Input for Suggestions", st.session_state.notes if 'notes' in st.session_state else '')
-    # if st.button("Generate Suggestions"):
-    #     suggestions = generate_suggestions(suggestion_input)
-    #     st.write(suggestions)
-
-    # st.header("Chat with GPT")
-    # chat_input = st.text_area("Input for Chat", st.session_state.notes if 'notes' in st.session_state else '')
-    # if st.button("Start Chat"):
-    #     chat = chat_with_gpt(chat_input)
-    #     st.write(chat)
+    template = templates[persona]
 
     st.header("Transcribe Audio")
     audio_file = st.file_uploader("Upload Audio", key='audio_file')
@@ -331,11 +343,19 @@ def main():
         st.write(transcribed_text)
         st.button("Transcription Complete", disabled=True)
 
+    # # Generate Notes
+    # st.header("Start of the Generate Notes")
+    # notes_input = st.text_area("Input", value=st.session_state.transcribed_text if 'transcribed_text' in st.session_state else '', key='notes_input')
+    # if st.button("Generate Notes"):
+    #     notes = generate_notes(notes_input)
+    #     st.session_state.notes = notes
+    #     st.markdown(f"**{notes}**", unsafe_allow_html=True)
+
     # Generate Notes
     st.header("Start of the Generate Notes")
     notes_input = st.text_area("Input", value=st.session_state.transcribed_text if 'transcribed_text' in st.session_state else '', key='notes_input')
     if st.button("Generate Notes"):
-        notes = generate_notes(notes_input)
+        notes = generate_notes(notes_input, template)
         st.session_state.notes = notes
         st.markdown(f"**{notes}**", unsafe_allow_html=True)
 
@@ -345,13 +365,6 @@ def main():
     if st.button("Generate Suggestions"):
         suggestions = generate_suggestions(suggestions_input)
         st.write(suggestions)
-
-    # # Chat with GPT
-    # st.header("Start of the Chat with GPT Section")
-    # chat_input = st.text_area("Input", value=st.session_state.notes if 'notes' in st.session_state else '', key='chat_input')
-    # if st.button("Chat with GPT"):
-    #     chat = chat_with_gpt(chat_input)
-    #     st.write(chat)
 
     st.title("MemoMed Chatbot")
 
