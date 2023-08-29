@@ -1,0 +1,4 @@
+openai
+speech_recognition
+langchain
+streamlit
