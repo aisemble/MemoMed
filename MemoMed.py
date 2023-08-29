@@ -335,21 +335,34 @@ def main():
     template = templates[persona]
 
     st.header("Transcribe Audio")
-    audio_file = st.file_uploader("Upload Audio", key='audio_file')
-    if st.button("Start Transcription"):
-        st.button("Transcribing...", disabled=True)
-        transcribed_text = transcribe_audio(audio_file)
-        st.session_state.transcribed_text = transcribed_text
-        st.write(transcribed_text)
-        st.button("Transcription Complete", disabled=True)
 
-    # # Generate Notes
-    # st.header("Start of the Generate Notes")
-    # notes_input = st.text_area("Input", value=st.session_state.transcribed_text if 'transcribed_text' in st.session_state else '', key='notes_input')
-    # if st.button("Generate Notes"):
-    #     notes = generate_notes(notes_input)
-    #     st.session_state.notes = notes
-    #     st.markdown(f"**{notes}**", unsafe_allow_html=True)
+    # audio_file = st.file_uploader("Upload Audio", key='audio_file')
+    # if st.button("Start Transcription"):
+    #     st.button("Transcribing...", disabled=True)
+    #     transcribed_text = transcribe_audio(audio_file)
+    #     st.session_state.transcribed_text = transcribed_text
+    #     st.write(transcribed_text)
+    #     st.button("Transcription Complete", disabled=True)
+
+    # Option for upload audio or using microphone
+    option = st.selectbox("Choose an option", ["Upload Audio File", "Use Microphone"])
+
+    if option == "Upload Audio File":
+        audio_file = st.file_uploader("Upload Audio", type=['wav', 'mp3', 'flac'], key='audio_file')
+        if st.button("Start Transcription from File"):
+            st.button("Transcribing...", disabled=True)
+            transcribed_text = transcribe_audio(audio_file)
+            st.session_state.transcribed_text = transcribed_text
+            st.write(transcribed_text)
+            st.button("Transcription Complete", disabled=True)
+
+    elif option == "Use Microphone":
+        if st.button("Start Transcription from Microphone"):
+            st.button("Transcribing...", disabled=True)
+            transcribed_text = transcribe_speech()
+            st.session_state.transcribed_text = transcribed_text
+            st.write(transcribed_text)
+            st.button("Transcription Complete", disabled=True)
 
     # Generate Notes
     st.header("Start of the Generate Notes")
