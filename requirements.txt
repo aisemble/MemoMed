@@ -2,3 +2,4 @@ openai
 SpeechRecognition
 langchain
 streamlit
+pyaudio
